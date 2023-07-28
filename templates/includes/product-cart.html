@@ -1,3 +1,4 @@
+{% load shop_helper %}
 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
     <div class="product-item bg-light mb-4">
         <div class="product-img position-relative overflow-hidden">
@@ -10,7 +11,7 @@
             </div>
         </div>
         <div class="text-center py-4">
-            <a class="h6 text-decoration-none text-truncate" href="">{{product.title}}</a>
+            <a class="h6 text-decoration-none text-truncate" href="{% url 'shop:product-detail' pk=product.pk %}">{{product.title}}</a>
             <div class="d-flex align-items-center justify-content-center mt-2">
               {% if product.old_price %}
                 <h5>{{product.price}}</h5><h6 class="text-muted ml-2"><del>{{product.old_price}}</del></h6>
@@ -19,11 +20,7 @@
                 {% endif %}
             </div>
             <div class="d-flex align-items-center justify-content-center mb-1">
-                <small class="fa fa-star text-primary mr-1"></small>
-                <small class="fa fa-star text-primary mr-1"></small>
-                <small class="fa fa-star text-primary mr-1"></small>
-                <small class="fa fa-star text-primary mr-1"></small>
-                <small class="fa fa-star text-primary mr-1"></small>
+                {% star 3.5 %}                
                 <small>(99)</small>
             </div>
         </div>

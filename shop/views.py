@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import Campaign,Category,Product
 from django.db.models import Count
+from customer.models import Review
 # Create your views here.
 
 
@@ -21,5 +22,27 @@ def home(request):
 def product_list(request):
     return render(request, 'product-list.html')
 
-def product_detail(request):
-    return render(request, 'product-detail.html')
+def product_detail(request,pk):
+    product=get_object_or_404(Product,pk=pk)
+    has_review=has_review=Review.objects.filter(customer=request.user.customer,product=product).exists()
+    return render(request,'product-detail.html',{'product':product,'has_review':has_review})
+
+
+def review(request,pk):
+    if request.method == 'POST':
+        customer=request.user.customer
+        product = get_object_or_404(Product, pk=pk)
+        if Review.objects.filter(customer=customer , product=product).exists():
+            return HttpResponse(status=403)
+        star_count = int(request.POST.get('star_count'))
+        comment = request.POST.get('comment')
+        Review.objects.create(
+            customer=customer,
+            product=product,
+            star_count=star_count,
+            comment=comment
+        )
+        return redirect('shop:product-detail', pk=pk)
+    return redirect('shop:product-detail', pk=pk)
+    
+                         
