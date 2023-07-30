@@ -48,6 +48,7 @@ class Product(models.Model):
     campaign = models.ManyToManyField(Campaign, related_name='products')
     update = models.DateTimeField(auto_now=True)
     created=models.DateTimeField(auto_now_add=True)
+    general=models.ManyToManyField(GeneralCategory, related_name='products')
     def __str__(self):
         return self.title
 

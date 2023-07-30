@@ -1,6 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from .forms import ContactForm, RegisterForm
 from django.contrib.auth import login,logout,authenticate
+from .models import WishItem
+from django.contrib.auth.decorators import login_required
+from shop.models import Product
 
 
 
@@ -20,6 +23,21 @@ def contact(request):
 
 def wishlist(request):
     return render(request, 'wishlist.html')
+
+@login_required
+def wish_product(request,pk):
+    product=get_object_or_404(Product,pk=pk)
+    customer=request.user.customer
+    wishitem=WishItem.objects.filter(product=product, customer=customer).delete()
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required
+def unwish_product(request,pk):
+    product=get_object_or_404(Product,pk=pk)
+    customer=request.user.customer
+    wishitem=WishItem.objects.create(product=product, customer=customer)
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 def basket(request):

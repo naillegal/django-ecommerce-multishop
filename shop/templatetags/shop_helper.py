@@ -1,5 +1,6 @@
 from django import template
 from ..models import GeneralCategory,Category
+from customer.models import WishItem
 
 
 register=template.Library()
@@ -25,4 +26,11 @@ def star(star_count):
         'half_star':half_star,
         'empty_star':range(empty_star),
     }
+
+@register.filter
+def is_wished(product,request):
+    if not request.user.is_authenticated:
+        return False
+    
+    return WishItem.objects.filter(product=product,customer=request.user.customer).exists()
 

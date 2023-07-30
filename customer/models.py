@@ -16,6 +16,13 @@ class Contact(models.Model):
         return self.name
 
 
+class WishItem(models.Model):
+    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    customer=models.ForeignKey('Customer',on_delete=models.CASCADE)
+    created=models.DateField(auto_now_add=True)
+
+
+
 class Customer(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     def __str__(self):

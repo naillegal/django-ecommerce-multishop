@@ -5,7 +5,11 @@
             <img class="img-fluid w-100" style={{"height:200px;object-fit:contain"}} src="{{product.images.first.image.url}}" alt="">
             <div class="product-action">
                 <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
-                <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
+                {% if product|is_wished:request %}
+                <a class="btn btn-outline-dark btn-square" href="{% url 'customer:wish-product' pk=product.pk %}"><i class="fas fa-heart"></i></a>
+                {% else %}
+                <a class="btn btn-outline-dark btn-square" href="{% url 'customer:unwish-product' pk=product.pk %}"><i class="far fa-heart"></i></a>
+                {% endif %}
                 <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
                 <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
             </div>

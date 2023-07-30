@@ -17,7 +17,7 @@ class ReviewInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines=[ProductImageInline,ReviewInline]
-    list_filter=['category']
+    list_filter=['general']
 
 
 

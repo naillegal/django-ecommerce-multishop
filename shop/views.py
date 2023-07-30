@@ -24,8 +24,10 @@ def product_list(request):
 
 def product_detail(request,pk):
     product=get_object_or_404(Product,pk=pk)
-    has_review=has_review=Review.objects.filter(customer=request.user.customer,product=product).exists()
-    return render(request,'product-detail.html',{'product':product,'has_review':has_review})
+    current_review=None
+    if (request.user.is_authenticated and request.user.customer):
+        current_review=has_review=Review.objects.filter(customer=request.user.customer,product=product).first()
+    return render(request,'product-detail.html',{'product':product,'current_review':current_review})
 
 
 def review(request,pk):
