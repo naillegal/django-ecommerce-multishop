@@ -4,6 +4,7 @@ from django.contrib.auth import login,logout,authenticate
 from .models import WishItem
 from django.contrib.auth.decorators import login_required
 from shop.models import Product
+from django.db.models import Sum
 
 
 
@@ -21,22 +22,24 @@ def contact(request):
     return render(request, 'contact.html', {'form': form})
 
 
-def wishlist(request):
-    return render(request, 'wishlist.html')
-
-@login_required
-def wish_product(request,pk):
-    product=get_object_or_404(Product,pk=pk)
-    customer=request.user.customer
-    wishitem=WishItem.objects.filter(product=product, customer=customer).delete()
-    return redirect(request.META.get('HTTP_REFERER'))
-
+def wishlist_view(request):
+    wishlist=request.user.customer.wishlist.all()
+    total_price=wishlist.aggregate(total_price=Sum('product__price'))['total_price']
+    return render(request, 'wishlist.html',{'wishlist': wishlist,'total_price': total_price})
 
 @login_required
 def unwish_product(request,pk):
     product=get_object_or_404(Product,pk=pk)
     customer=request.user.customer
-    wishitem=WishItem.objects.create(product=product, customer=customer)
+    WishItem.objects.filter(product=product, customer=customer).delete()
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required
+def wish_product(request,pk):
+    product=get_object_or_404(Product,pk=pk)
+    customer=request.user.customer
+    WishItem.objects.create(product=product, customer=customer)
     return redirect(request.META.get('HTTP_REFERER'))
 
 
@@ -68,17 +71,21 @@ def login_view(request):
             return render(request, 'login.html', context={'unsuccessful': True})
 
 
+
 def register(request):
     form = RegisterForm()
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request,user)
+            login(request, user)
             return redirect('shop:home')
     return render(request, 'register.html', {'form': form})
+
 
 
 def logout_view(request):
     logout(request)
     return redirect('customer:login')
+
+    

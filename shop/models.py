@@ -51,6 +51,9 @@ class Product(models.Model):
     general=models.ManyToManyField(GeneralCategory, related_name='products')
     def __str__(self):
         return self.title
+    
+    def get_avg_star(self):
+        return self.reviews.aggregate(star_count_avg=models.Avg('star_count'))['star_count_avg'] or 0
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')

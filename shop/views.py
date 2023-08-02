@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import Campaign,Category,Product
 from django.db.models import Count
 from customer.models import Review
+from django.core.paginator import Paginator
 # Create your views here.
 
 
@@ -20,7 +21,11 @@ def home(request):
     })
 
 def product_list(request):
-    return render(request, 'product-list.html')
+    products = Product.objects.all()
+    paginator=Paginator(products,4)
+    page_number=request.GET.get('page')
+    productsfinal=paginator.get_page(page_number)
+    return render(request, 'product-list.html',{'productsfinal':productsfinal})
 
 def product_detail(request,pk):
     product=get_object_or_404(Product,pk=pk)

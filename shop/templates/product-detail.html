@@ -43,7 +43,7 @@
                     <h3>{{product.title}}</h3>
                     <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
-                          {% star 3.5 %}
+                            {% star current_review.star_count %}
                         </div>
                         <small class="pt-1">(99 Reviews)</small>
                     </div>
@@ -137,7 +137,7 @@
                                         <div class="media-body">
                                             <h6>{{request.user.get_full_name}}<small> - <i>{{current_review.created}}</i></small></h6>
                                             <div class="text-primary mb-2">
-                                                {% star 3.5 %}
+                                                {% star current_review.star_count %}
                                             </div>
                                             <p>{{current_review.comment}}</p>
                                         </div>
