@@ -21,6 +21,15 @@ class WishItem(models.Model):
     created=models.DateField(auto_now_add=True)
 
 
+class BasketItem(models.Model):
+    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    customer=models.ForeignKey('Customer',on_delete=models.CASCADE,related_name='basketlist')
+    count=models.IntegerField(default=0)
+    size=models.ForeignKey('shop.Size',on_delete=models.CASCADE)
+    color=models.ForeignKey('shop.Color',on_delete=models.CASCADE)
+    created=models.DateField(auto_now_add=True)
+
+
 class Customer(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     def __str__(self):

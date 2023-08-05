@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.admin import display
 from django.utils.html import format_html   
+from django.urls import reverse
 
 
 # Create your models here.
@@ -54,6 +55,10 @@ class Product(models.Model):
     
     def get_avg_star(self):
         return self.reviews.aggregate(star_count_avg=models.Avg('star_count'))['star_count_avg'] or 0
+    
+    def get_absolute_url(self):
+        return reverse("shop:product-detail",kwargs={"pk":self.pk})
+    
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
