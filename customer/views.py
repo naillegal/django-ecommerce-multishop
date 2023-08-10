@@ -5,6 +5,7 @@ from .models import WishItem,BasketItem
 from django.contrib.auth.decorators import login_required
 from shop.models import Product
 from django.db.models import Sum,F
+from payment.models import Coupon
 
 
 
@@ -46,7 +47,43 @@ def wish_product(request,pk):
 @login_required
 def basket(request):
     basketlist=request.user.customer.basketlist.all().annotate(total_price=F('count')*F('product__price'))
-    return render(request, 'basket.html',{'basketlist':basketlist})
+    all_price = basketlist.aggregate(all_price=Sum('total_price'))['all_price'] or 0
+    shipping_price = all_price * 0.07
+    final_price = all_price + shipping_price
+    coupon_code = request.GET.get('coupon')
+    coupon_status = None    
+    coupon_message = None
+    coupon_discount = 0
+    coupon_discount_amount = 0
+    if coupon_code:
+        coupon = Coupon.objects.filter(code=coupon_code).first()
+        if coupon:
+            is_valid,message = coupon.is_valid(request.user.customer)
+            if is_valid:
+                coupon_status = 'valid'
+                coupon_message = message
+                coupon_discount = coupon.discount
+                coupon_discount_amount = final_price * coupon_discount / 100
+                final_price -= coupon_discount_amount
+            else:
+                coupon_status = 'invalid'
+                coupon_message = message
+        else:
+            coupon_status = 'invalid'
+            coupon_message = 'Bele bir kupon yoxdur'
+
+
+    return render(request,'basket.html',
+    {'basketlist':basketlist,
+    'all_price':all_price,
+    'shipping_price':shipping_price,
+    'final_price':final_price,
+    'coupon_code':coupon_code,
+    'coupon_message':coupon_message,
+    'coupon_status':coupon_status,
+    'coupon_discount':coupon_discount,
+    'coupon_discount_amount':coupon_discount_amount,
+    })
 
 
 def add_basket(request,product_pk):

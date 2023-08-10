@@ -43,3 +43,6 @@ class Review(models.Model):
     star_count=models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
     created=models.DateField(auto_now_add=True)
     
+
+
+
