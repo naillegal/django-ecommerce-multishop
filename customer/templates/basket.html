@@ -33,7 +33,7 @@
                     {% for basket in basketlist  %}
                     <tr>
                         <td class="align-middle"><img src="{{basket.product.images.first.image.url}}" alt="" style="width: 50px;">{{basket.product.title}}</td>
-                        <td class="align-middle">{{basket.product.price}}AZN</td>
+                        <td class="align-middle">${{basket.product.price}}</td>
                         <td class="align-middle">
                             <div class="input-group quantity mx-auto" style="width: 100px;">
                                 <div class="input-group-btn">
@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="align-middle">{{basket.total_price}}AZN</td>
+                        <td class="align-middle">${{basket.total_price}}</td>
                         <td class="align-middle"><a class="btn btn-sm btn-danger" href="{% url 'customer:remove-basket' basket_pk=basket.pk %}"><i class="fa fa-times"></i></a></td>
                     </tr>
                     {% endfor %}
@@ -59,7 +59,7 @@
         <div class="col-lg-4">
             <form class="mb-30" action="">
                 <div class="input-group">
-                    <input type="text" class="form-control border-0 p-4" name="coupon" value="{{coupon_code}}" placeholder="Coupon Code">
+                    <input type="text" class="form-control border-0 p-4" name="coupon" {% if coupon_code %}value="{{coupon_code}}"{% endif %} placeholder="Coupon Code">
                     <div class="input-group-append">
                         <button class="btn btn-primary">Apply Coupon</button>
                     </div>
@@ -93,7 +93,9 @@
                         <h5>Total</h5>
                         <h5>${{final_price}}</h5>
                     </div>
-                    <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
+                    {% if final_price %}
+                    <a href="{% url 'payment:checkout' %}{% if coupon_status == 'valid' %}?coupon={{coupon_code}}{% endif %}" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

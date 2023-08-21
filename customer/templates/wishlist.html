@@ -34,7 +34,7 @@
                         {% for wishitem in wishlist  %}
                         <tr>
                             <td class="align-middle"><img src="{{wishitem.product.images.first.image.url}}" alt="" style="width:50px;"><a class="text-dark" href="{{wishitem.product.get_absolute_url}}">{{wishitem.product.title}}</a></td>
-                            <td class="align-middle">{{wishitem.product.price}} AZN</td>
+                            <td class="align-middle">${{wishitem.product.price}}</td>
                             <td class="align-middle">{% star wishitem.product.get_avg_star %}</td>
                             <td class="align-middle"><a href="{% url 'customer:unwish-product' pk=wishitem.product.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a></td>
                         </tr>
@@ -48,7 +48,7 @@
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5>{{total_price|floatformat}} AZN</h5>
+                            <h5>${{total_price|floatformat}}</h5>
                         </div>
                         <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
                     </div>

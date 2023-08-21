@@ -74,7 +74,8 @@ def basket(request):
 
 
     return render(request,'basket.html',
-    {'basketlist':basketlist,
+    {
+    'basketlist':basketlist,
     'all_price':all_price,
     'shipping_price':shipping_price,
     'final_price':final_price,
@@ -163,3 +164,11 @@ def logout_view(request):
     return redirect('customer:login')
 
     
+usd_eq={'AZN':1.7,'TRY':27.1,'EUR':0.92,'USD':1}
+def change_currency(request):
+    currency = request.GET.get('currency')
+    currency_ratio = usd_eq[currency]
+    request.session['currency'] = currency
+    request.session['currency_ratio'] = currency_ratio
+    return redirect(request.META.get('HTTP_REFERER'))
+

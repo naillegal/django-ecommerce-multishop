@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.admin import display
 from django.utils.html import format_html   
 from django.urls import reverse
-
+from shared.urlutils import get_slug
 
 # Create your models here.
 
@@ -38,7 +38,8 @@ class Campaign(models.Model):
         return self.title
 
 class Product(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.TextField(max_length=50)
+    slug = models.CharField(max_length=100, blank=True)
     old_price = models.FloatField(null=True, blank=True)
     featured = models.BooleanField(default=True)
     price = models.FloatField()
@@ -47,17 +48,22 @@ class Product(models.Model):
     colors = models.ManyToManyField(Color, related_name='products')
     category = models.ManyToManyField(Category, related_name='products')
     campaign = models.ManyToManyField(Campaign, related_name='products')
-    update = models.DateTimeField(auto_now=True)
+    updated = models.DateTimeField(auto_now=True)
     created=models.DateTimeField(auto_now_add=True)
     general=models.ManyToManyField(GeneralCategory, related_name='products')
+
+    def save(self, *args, **kwargs):
+        self.slug = get_slug(self.title)
+        return super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
     
+    def get_absolute_url(self):
+        return reverse("shop:product-detail", kwargs={"pk": self.pk, 'slug': self.slug})
+    
     def get_avg_star(self):
         return self.reviews.aggregate(star_count_avg=models.Avg('star_count'))['star_count_avg'] or 0
-    
-    def get_absolute_url(self):
-        return reverse("shop:product-detail",kwargs={"pk":self.pk})
     
 
 class ProductImage(models.Model):

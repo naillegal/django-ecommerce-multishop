@@ -1,17 +1,40 @@
 from django import forms
-from .models import Order
+from .models import Order,OrderedProduct
 
 class OrderForm(forms.ModelForm):
     class Meta:
-        exclude = ['customer','used_coupon','accepted','delivered','created']
+        exclude = ['customer','coupon_code','coupon_discount','accepted','delivered','created']
         model = Order
         widgets = {
-            'first_name':forms.TextInput(attrs={'class':'form-control'}),
-            'last_name':forms.TextInput(attrs={'class':'form-control'}),
-            'email':forms.TextInput(attrs={'class':'form-control'}),
-            'mobile':forms.TextInput(attrs={'class':'form-control'}),
-            'city':forms.TextInput(attrs={'class':'form-control'}),
-            'address':forms.TextInput(attrs={'class':'form-control'}),
-            'zip_code':forms.TextInput(attrs={'class':'form-control'}),
-            'country':forms.SelectMultiple(attrs={'class':'custom-select'})
+            'first_name':forms.TextInput(attrs={'class':'form-control','placeholder':'John'}),
+            'last_name':forms.TextInput(attrs={'class':'form-control','placeholder':'Doe'}),
+            'email':forms.TextInput(attrs={'class':'form-control','placeholder':'example@example.com'}),
+            'mobile':forms.TextInput(attrs={'class':'form-control','placeholder':'+994123457890'}),
+            'city':forms.TextInput(attrs={'class':'form-control','placeholder':'Baku'}),
+            'address':forms.TextInput(attrs={'class':'form-control','placeholder':'Random address'}),
+            'zip_code':forms.TextInput(attrs={'class':'form-control','placeholder':'AZ1000'}),
+            'country':forms.Select(attrs={'class':'custom-select'})
         }
+
+    def save(self,customer,basketlist,coupon):
+        data = self.cleaned_data.copy()
+        data['customer'] = customer
+        if coupon and coupon.is_valid(customer)[0]:
+            data['coupon_code'] = coupon.code
+            data['coupon_discount'] = coupon.discount
+            
+        order = Order.objects.create(**data)
+        
+
+        ordered_products=[]
+        for basketitem in basketlist:
+            op = OrderedProduct(
+                order = order,
+                title = basketitem.product.title,
+                count = basketitem.count,
+                price = basketitem.product.price,
+                size = basketitem.size.title,
+                color = basketitem.color.title,
+            )
+            ordered_products.append(op)
+        OrderedProduct.objects.bulk_create(ordered_products)

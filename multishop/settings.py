@@ -38,15 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     'customer',
     'payment',
     'shop',
     'django_cleanup.apps.CleanupConfig',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "django.middleware.locale.LocaleMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -116,6 +119,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+LANGUAGES = [
+    ('az','Azerbaijani'),
+    ('en','English'),
+    ('tr','Turkish'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale'
+]
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -133,6 +146,8 @@ STATICFILES_DIRS=[
 
 MEDIA_URL='media/'
 MEDIA_ROOT=BASE_DIR / 'media'
+
+
 
 
 # Default primary key field type

@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-17 11:44+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\payment\models.py:21
+msgid "This coupon has expired"
+msgstr "Bu kuponun tarixi bitmişdir"
+
+#: .\payment\models.py:23
+msgid "This coupon has reached limit"
+msgstr "Bu kuponun istifade limiti keçmişdir"
+
+#: .\payment\models.py:25
+msgid "You have already used this coupon"
+msgstr "Siz bu kuponu artıq istifadə etmisiniz"
+
+#: .\payment\models.py:27
+msgid "Coupon successfully aplied"
+msgstr "Kupon uğurla elavə olundu"
+
+#: .\shop\templates\home.html:23 .\shop\templates\home.html:38
+msgid "Shop Now"
+msgstr "İndi alış-veriş et"
+
+#: .\shop\templates\home.html:54
+msgid "Quality Product"
+msgstr "Keyfiyyətli məhsullar"
+
+#: .\shop\templates\home.html:60
+msgid "Free Shipping"
+msgstr "Pulsuz çatdırılma"
+
+#: .\shop\templates\home.html:66
+msgid "14-Day Return"
+msgstr "14 gün qaytarma qarantiyası"
+
+#: .\shop\templates\home.html:72
+msgid "24/7 Support"
+msgstr "24/7 dəstək"
+
+#: .\shop\templates\home.html:82 .\templates\layout.html:125
+msgid "Categories"
+msgstr "Kateqoriyalar"
+
+#: .\templates\layout.html:38
+msgid "About"
+msgstr "Haqqımızda"
+
+#: .\templates\layout.html:39
+msgid "Contact"
+msgstr "Elaqə"
+
+#: .\templates\layout.html:40
+msgid "Help"
+msgstr "Dəstək"
+
+#: .\templates\layout.html:41
+msgid "FAQs"
+msgstr "FAQ"
+
+#: .\templates\layout.html:47
+msgid "My"
+msgstr "Mənim"
+
+#: .\templates\layout.html:47
+msgid "Account"
+msgstr "Hesabım"
+
+#: .\templates\layout.html:50
+msgid "Logout"
+msgstr "Çıxış et"
+
+#: .\templates\layout.html:52
+msgid "Register"
+msgstr "Qeydiyyat"
+
+#: .\templates\layout.html:53
+msgid "Login"
+msgstr "Daxil ol"
+
+#: .\templates\layout.html:112
+msgid "Customer Service"
+msgstr "Müştəri xidmətləri"
+
+#: .\templates\layout.html:143
+msgid "Home"
+msgstr "Ana səhifə"
+
+#: .\templates\layout.html:144
+#, fuzzy
+#| msgid "Shop Now"
+msgid "Shop"
+msgstr "Alış-veriş"

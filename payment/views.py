@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import Coupon
 from django.db.models import Sum,F
+from .forms import OrderForm
 
 # Create your views here.
 
@@ -16,7 +17,7 @@ def checkout(request):
     if coupon_code:
         coupon = Coupon.objects.filter(code=coupon_code).first()
         if coupon:
-            is_valid,message = coupon.is_valid(request.user.customer)
+            is_valid = coupon.is_valid(request.user.customer)
             if is_valid:
                 coupon_status = 'valid'
                 coupon_discount = coupon.discount
@@ -26,4 +27,23 @@ def checkout(request):
                 coupon_status = 'invalid'
         else:
             coupon_status = 'invalid'
-    return render(request,'checkout.html')
+
+    form = OrderForm()
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save(request.user.customer, basketlist, coupon)
+            return redirect('shop:home') 
+
+    return render(request,'checkout.html',{
+        'form':form,
+        'basketlist':basketlist,
+        'all_price':round(all_price, 2),
+        'shipping_price':round(shipping_price, 2),
+        'final_price':round(final_price, 2),
+        'coupon_code':coupon_code,
+        'coupon_status':coupon_status,
+        'coupon_discount':coupon_discount,
+        'coupon_discount_amount':round(coupon_discount_amount, 2),
+        })

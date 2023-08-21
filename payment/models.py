@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 class Coupon(models.Model):
@@ -18,13 +18,13 @@ class Coupon(models.Model):
 
     def is_valid(self,customer):
         if timezone.localtime() > self.expire:
-            return (False,'Bu kuponun istifade tarixi bitmisdir')
+            return (False,_('This coupon has expired'))
         elif self.used_customers.count() >= self.limit:
-            return (False,'Bu kuponun istifade limiti bitmisdir')
+            return (False,_('This coupon has reached limit'))
         elif self.used_customers.contains(customer):
-            return (False,'Siz artiq bu kuponu istifade etmisiniz')
+            return (False,_('You have already used this coupon'))
         else:
-            return [True,'Kupon ugurla istifade olundu']
+            return [True,_('Coupon successfully aplied')]
         
 
 COUNTRIES = [
@@ -38,7 +38,8 @@ COUNTRIES = [
 
 class Order(models.Model):
     customer = models.ForeignKey('customer.Customer',on_delete=models.SET_NULL,null=True)
-    used_coupon = models.ForeignKey(Coupon, null=True ,blank=True,on_delete=models.SET_NULL)
+    coupon_code = models.CharField(max_length=20,null=True,blank=True)
+    coupon_discount = models.IntegerField(default=0)
     accepted = models.BooleanField(default=False)
     delivered = models.BooleanField(default=False)
     first_name = models.CharField(max_length=50)
@@ -55,6 +56,7 @@ class Order(models.Model):
 class OrderedProduct(models.Model):
     order = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='products')
     title = models.CharField(max_length=50)
+    count = models.IntegerField()
     price = models.FloatField()
     size = models.CharField(max_length=50)
     color = models.CharField(max_length=50)

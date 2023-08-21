@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
-from .models import Campaign,Category,Product
-from django.db.models import Count
+from .models import Campaign,Category,Product,Color,Size
+from django.db.models import Count,Avg
 from customer.models import Review
 from django.core.paginator import Paginator
+from django.contrib.postgres.search import TrigramSimilarity,SearchQuery,SearchRank,SearchVector
+from .filters import ProductFilter
 # Create your views here.
 
 
@@ -21,13 +23,47 @@ def home(request):
     })
 
 def product_list(request):
-    products = Product.objects.all()
-    paginator=Paginator(products,4)
-    page_number=request.GET.get('page')
-    productsfinal=paginator.get_page(page_number)
-    return render(request, 'product-list.html',{'productsfinal':productsfinal})
+    products = Product.objects.all().annotate(avg_star=Avg('reviews__star_count'), review_count=Count('reviews'))
 
-def product_detail(request,pk):
+    search_input = request.GET.get('search')
+    if search_input:
+        # products = products.filter(title=search_input)
+        # products = products.filter(title__iexact=search_input)
+        # products = products.filter(title__icontains=search_input)
+        # products = products.annotate(similarity=TrigramSimilarity('title', search_input)).filter(similarity__gt=0.2).order_by('-similarity')
+        vector = SearchVector("title", weight="A") + SearchVector("description", weight="B") + SearchVector("category__title", weight="C")
+        query = SearchQuery(search_input)
+        products = products.annotate(rank=SearchRank(vector, query)).filter(rank__gte=0.1).order_by('-rank')
+
+    product_filter = ProductFilter(request.GET, products)
+    products = product_filter.qs
+
+    sorting_input = request.GET.get('sorting')
+    if sorting_input:
+        if sorting_input == '-avg_star':
+            products = products.order_by('-avg_star', '-review_count')
+        else:
+            products = products.order_by(sorting_input)
+
+
+    page_by_input = int(request.GET.get('page_by', 4))
+    page_input = request.GET.get('page', 1)
+    paginator = Paginator(products, page_by_input)
+    page = paginator.page(page_input)
+    products = page.object_list
+
+    colors = Color.objects.all().annotate(product_count=Count('products'))
+    sizes = Size.objects.all().annotate(product_count=Count('products'))
+
+    return render(request, 'product-list.html', {
+        'products': products,
+        'paginator': paginator,
+        'page': page,
+        'colors': colors,
+        'sizes': sizes,
+    })
+
+def product_detail(request,pk,slug):
     product=get_object_or_404(Product,pk=pk)
     current_review=None
     if (request.user.is_authenticated and request.user.customer):
