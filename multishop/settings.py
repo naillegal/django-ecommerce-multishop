@@ -156,3 +156,25 @@ MEDIA_ROOT=BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = reverse_lazy('customer:login')
+
+
+
+
+# djangotest8448@gmail.com
+# cenqo8448
+# uivswtiuqaxoiipp
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'djangotest8448@gmail.com'
+EMAIL_HOST_PASSWORD = 'uivswtiuqaxoiipp'
+EMAIL_USE_TLS = True
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": BASE_DIR.parent / 'django-cache',
+    }
+}

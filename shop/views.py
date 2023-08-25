@@ -5,9 +5,10 @@ from customer.models import Review
 from django.core.paginator import Paginator
 from django.contrib.postgres.search import TrigramSimilarity,SearchQuery,SearchRank,SearchVector
 from .filters import ProductFilter
+from django.views.decorators.cache import cache_page
 # Create your views here.
 
-
+# @cache_page(15)
 def home(request):
     slide_campaigns=Campaign.objects.filter(is_slider=True)[:3]
     nonslide_campaigns=Campaign.objects.filter(is_slider=False)[:4]
@@ -68,7 +69,8 @@ def product_detail(request,pk,slug):
     current_review=None
     if (request.user.is_authenticated and request.user.customer):
         current_review=Review.objects.filter(customer=request.user.customer,product=product).first()
-    return render(request,'product-detail.html',{'product':product,'current_review':current_review})
+        similar_products = product.get_similar_products()
+    return render(request,'product-detail.html',{'product':product,'current_review':current_review,'similar_products':similar_products})
 
 
 def review(request,pk):
@@ -85,7 +87,7 @@ def review(request,pk):
             star_count=star_count,
             comment=comment
         )
-        return redirect('shop:product-detail', pk=pk)
-    return redirect('shop:product-detail', pk=pk)
+        return redirect('shop:product-detail', pk=product.pk,slug=product.slug)
+    return redirect('shop:product-detail', pk=product.pk,slug=product.slug)
     
                          

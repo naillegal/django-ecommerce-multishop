@@ -52,6 +52,10 @@ class Product(models.Model):
     created=models.DateTimeField(auto_now_add=True)
     general=models.ManyToManyField(GeneralCategory, related_name='products')
 
+    def get_similar_products(self):
+        similar_by_general = Product.objects.filter(general__in=self.general.all()).exclude(pk=self.pk)
+        return similar_by_general
+
     def save(self, *args, **kwargs):
         self.slug = get_slug(self.title)
         return super().save(*args, **kwargs)

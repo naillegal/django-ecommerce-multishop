@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .forms import ContactForm, RegisterForm
+from .forms import ContactForm, RegisterForm,PasswordResetForm
 from django.contrib.auth import login,logout,authenticate
-from .models import WishItem,BasketItem
+from .models import WishItem,BasketItem,ResetPassword
 from django.contrib.auth.decorators import login_required
 from shop.models import Product
 from django.db.models import Sum,F
 from payment.models import Coupon
-
-
+from django.contrib.auth.models import User 
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 
@@ -172,3 +173,42 @@ def change_currency(request):
     request.session['currency_ratio'] = currency_ratio
     return redirect(request.META.get('HTTP_REFERER'))
 
+
+
+def forgot_password_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+        if user:
+            ResetPassword.objects.filter(user=user).update(used=True)
+            rp = ResetPassword.objects.create(user=user)
+            url = request.build_absolute_uri(rp.get_absolute_url())
+            message = f'Please renew your password from this link:{url}'
+            subject = 'Renew Password'
+            sender = settings.EMAIL_HOST_USER
+            send_mail(subject,message,sender,[email])
+            return redirect('customer:reset-password-result',color='success',message='Mail sent successfully')
+        else:
+            return render(request,'forgot_password.html',{'status':'invalid_user'})
+    return render(request,'forgot_password.html')
+
+
+def reset_password_view(request, token):
+    rp = ResetPassword.objects.filter(token=token).first()
+    if rp and rp.is_valid():
+        if request.method == 'GET':
+            form = PasswordResetForm(initial={'token': token})
+            return render(request, 'reset-password.html', {'form': form})
+        else:
+            form = PasswordResetForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('customer:reset-password-result', color='success', message='Password changed successfully')
+            return render(request, 'reset-password.html', {'form': form})
+    else:
+        return redirect('customer:reset-password-result', color='danger', message='This link is broken or already used!')
+
+
+
+def reset_password_result_view(request,color,message):
+    return render(request,'reset-password-result.html',{'color':color,'message':message})
