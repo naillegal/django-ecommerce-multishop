@@ -23,13 +23,16 @@ from django.shortcuts import render
 from.sitemaps import StaticViewSitemap,ProductViewSitemap
 from django.contrib.sitemaps.views import sitemap
 from . import views
+from os import getenv
+
+
 sitemaps = {
     'static': StaticViewSitemap,
     'product': ProductViewSitemap,
 }
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(getenv('ADMIN_URL'), admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
     path('robots.txt', views.robots),
     path("sitemap.xml",sitemap,{"sitemaps": sitemaps},name="django.contrib.sitemaps.views.sitemap",)
