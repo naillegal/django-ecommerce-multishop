@@ -153,8 +153,8 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            customer = form.save()
+            login(request, customer.user)
             return redirect('shop:home')
     return render(request, 'register.html', {'form': form})
 
