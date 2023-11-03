@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'shop',
     'django_cleanup.apps.CleanupConfig',
     'django_filters',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -201,5 +202,5 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazo
 
 
 
-
-
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"

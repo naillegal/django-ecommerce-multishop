@@ -8,6 +8,7 @@ from django.db.models import Sum,F
 from payment.models import Coupon
 from django.contrib.auth.models import User 
 from django.core.mail import send_mail
+from .tasks import send_custom_celery_mail, send_custom_ordinary_mail
 from django.conf import settings
 
 # Create your views here.
@@ -186,7 +187,9 @@ def forgot_password_view(request):
             message = f'Please renew your password from this link:{url}'
             subject = 'Renew Password'
             sender = settings.EMAIL_HOST_USER
-            send_mail(subject,message,sender,[email])
+            # send_mail(subject,message,sender,[email])
+            send_custom_celery_mail.delay(subject,message,sender,[email])
+            # send_custom_ordinary_mail(subject,message,sender,[email])
             return redirect('customer:reset-password-result',color='success',message='Mail sent successfully')
         else:
             return render(request,'forgot_password.html',{'status':'invalid_user'})
@@ -212,3 +215,5 @@ def reset_password_view(request, token):
 
 def reset_password_result_view(request,color,message):
     return render(request,'reset-password-result.html',{'color':color,'message':message})
+
+

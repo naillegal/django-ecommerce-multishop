@@ -69,8 +69,7 @@ def product_detail(request,pk,slug):
     current_review=None
     if (request.user.is_authenticated and request.user.customer):
         current_review=Review.objects.filter(customer=request.user.customer,product=product).first()
-        similar_products = product.get_similar_products()
-    return render(request,'product-detail.html',{'product':product,'current_review':current_review,'similar_products':similar_products})
+    return render(request,'product-detail.html',{'product':product,'current_review':current_review})
 
 
 def review(request,pk):

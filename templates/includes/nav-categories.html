@@ -1,7 +1,5 @@
 {% load cache %}
 
-
-
 {% cache 60 nav-categories %}
     <div class="navbar-nav w-100">
         {% for general_category in general_categories %}
